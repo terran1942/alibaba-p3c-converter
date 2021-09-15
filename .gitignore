@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Custom
+xlsx_reporting/*.xlsx
+xml_reporting/*
