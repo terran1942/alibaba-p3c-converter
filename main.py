@@ -5,7 +5,8 @@ import time
 import openpyxl
 from bs4 import BeautifulSoup
 
-nexus_group_code = {}
+nexus_code_group = {}
+nexus_code_name = {}
 nexus_alias = {}
 
 
@@ -19,7 +20,7 @@ def read_reporting(root, file, workbook, total_workbook):
     # 追加缺陷记录
     for problem in problems:
         # 模块
-        v_module = problem.module.text.upper()
+        v_module_code = problem.module.text.upper()
         # 缺陷位置
         v_location = problem.entry_point['FQNAME'].split()
         # 行号
@@ -47,18 +48,20 @@ def read_reporting(root, file, workbook, total_workbook):
         # 缺陷描述
         v_description = problem.description.text
         # 获取真实模块名
-        if v_module in nexus_alias:
-            v_module = nexus_alias[v_module]
-        # 查询开发团队
+        if v_module_code in nexus_alias:
+            v_module_code = nexus_alias[v_module_code]
+        # 查询开发团队与模块名称
         develop_group_name = None
-        if v_module in nexus_group_code:
-            develop_group_name = nexus_group_code[v_module]
+        module_name = None
+        if v_module_code in nexus_code_group:
+            develop_group_name = nexus_code_group[v_module_code]
+            module_name = nexus_code_name[v_module_code]
         # 追加新列
         worksheet.append(
-            [date_str, develop_group_name, v_module, v_problem_class, v_location[0] + ':' + v_line, v_description,
+            [date_str, develop_group_name, module_name, v_module_code, v_problem_class, v_location[0] + ':' + v_line, v_description,
              v_severity, v_priority, v_status])
         total_worksheet.append(
-            [date_str, develop_group_name, v_module, v_problem_class, v_location[0] + ':' + v_line, v_description,
+            [date_str, develop_group_name, module_name, v_module_code, v_problem_class, v_location[0] + ':' + v_line, v_description,
              v_severity, v_priority, v_status])
 
 
@@ -66,7 +69,8 @@ def read_nexus():
     workbook = openpyxl.load_workbook("./nexus.xlsx")
     worksheet = workbook['code']
     for row in worksheet.rows:
-        nexus_group_code[row[2].value] = row[1].value
+        nexus_code_group[row[0].value] = row[2].value
+        nexus_code_name[row[0].value] = row[1].value
     worksheet = workbook['alias']
     for row in worksheet.rows:
         nexus_alias[row[0].value] = row[1].value
