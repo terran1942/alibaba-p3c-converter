@@ -12,7 +12,6 @@ nexus_alias = {}
 def read_reporting(root, file, workbook, total_workbook):
     date_str = time.strftime("%Y年%m月%d日", time.localtime())
     xml_path = root + '/' + file
-    sheet_names = workbook.sheetnames
     worksheet = workbook.active
     total_worksheet = total_workbook.active
     soup = BeautifulSoup(builtins.open(xml_path, encoding='utf8'), 'xml')
@@ -56,10 +55,10 @@ def read_reporting(root, file, workbook, total_workbook):
             develop_group_name = nexus_group_code[v_module]
         # 追加新列
         worksheet.append(
-            [None, date_str, develop_group_name, v_module, v_problem_class, v_location[0] + ':' + v_line, v_description,
+            [date_str, develop_group_name, v_module, v_problem_class, v_location[0] + ':' + v_line, v_description,
              v_severity, v_priority, v_status])
         total_worksheet.append(
-            [None, date_str, develop_group_name, v_module, v_problem_class, v_location[0] + ':' + v_line, v_description,
+            [date_str, develop_group_name, v_module, v_problem_class, v_location[0] + ':' + v_line, v_description,
              v_severity, v_priority, v_status])
 
 
